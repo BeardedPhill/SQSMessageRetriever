@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+    {% block content %}
+        <form action="/get_sqs_messages" method="POST">
+            <div class="form-group">
+                <input type="text" class="form-control" name="SQS_URL">
+            </div>
+            <button type="submit" class="btn btn-block btn-primary">GET Messages</button>
+        </form>
+        <br />
+        <div style="overflow: auto; max-height: 80vh">
+            <div class="table-responsive">
+                <table id="messagesTable" class="table">
+                    <thead class="container">
+                        <tr>
+                            <th id="timeHeader" onclick="sortTable(0)" scope="col">
+                              <b>TimeStamp</b>
+                              <i class="fa fa-fw fa-sort"></i>
+                            </th>
+                            <th scope="col">Body</th>
+                        </tr>
+                    </thead>
+                    <tbody class="container">
+                    {% for message in messages %}
+                        <tr id={{ message.id }}>
+                            <td scope="row">{{ message.timestamp }}</td>
+                            <td class="json-metadata" id="body"> {{ message.body }} </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endblock %}
