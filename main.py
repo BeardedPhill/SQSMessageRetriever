@@ -15,8 +15,12 @@ def get_messages():
         if (key=="SQS_URL"):
             queue_url = value
 
-    messages = call_sqs(queue_url)
-    return render_template('index.html', messages=messages)
+    try:
+        messages = call_sqs(queue_url)
+        return render_template('index.html', messages=messages)
+    except Exception as e:
+        return render_template('error_template.html', error_message=str(e))
+
 
 def get_messages_from_queue(queue_url):
     sqs_client = boto3.client('sqs')

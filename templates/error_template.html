@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <span class="text-monospace">SQS URL</span>
+    <form action="/get_sqs_messages" method="POST">
+        <div class="form-group">
+            <input id="SQS_URL" type="text" class="form-control" name="SQS_URL">
+        </div>
+        <button type="submit" class="btn btn-block btn-primary">GET Messages</button>
+    </form>
+    <br />
+    <div class="alert alert-danger">
+      <p>{{ error_message }}</p>
+    </div>
+{% endblock %}
