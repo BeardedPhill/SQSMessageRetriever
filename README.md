@@ -1,4 +1,4 @@
-# SQS Message Retriever
+# SQS Message Retriever - test
 Simple app to get messages from an SQS queue without deleting it and then visualize the data in a sortable table.
 
 <sup>1) Make sure you have an AWS profile setup for the AWS environment you want to pull SQS messages from.</sup>
