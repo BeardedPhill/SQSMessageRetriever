@@ -1,29 +1,55 @@
 <!doctype html>
-   <html lang="en">
-     <head>
-         <!-- Required meta tags -->
-       <meta charset="utf-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-       <!-- Bootstrap CSS -->
-       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-       <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-       <link href="../static/custom.css" rel="stylesheet">
-       <title>SQS Message Retriever</title>
-     </head>
-     <body>
-         <div class="container h-100">
-           <div class="row align-items-center h-100">
-               <div class="col-md-10 col-sm-12 mx-auto">
-                   <div class="h-100 justify-content-center">
-                       {% block content %}  {% endblock %}
-                   </div>
+<html lang="en">
+ <head>
+     <!-- Required meta tags -->
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <!-- Bootstrap CSS -->
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+   <link href="../static/custom.css" rel="stylesheet">
+   <title>SQS Message Retriever</title>
+ </head>
+ <body>
+   {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger">
+        {% for message in messages %}
+          <div>
+            {% for para in message %}
+              <p>{{ para }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+     <div class="container h-100">
+       <div class="row align-items-center h-100">
+           <div class="col-md-10 col-sm-12 mx-auto">
+               <div class="h-100 justify-content-center">
+                   {% block content %}  {% endblock %}
                </div>
            </div>
        </div>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-       <script type="text/javascript" src="../static/renderjson-init.js"></script>
-       <script type="text/javascript" src="../static/renderjson.js"></script>
-       <script type="text/javascript" src="../static/custom.js"></script>
-     </body>
-   </html>
+   </div>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+   <script type="text/javascript" src="../static/renderjson-init.js"></script>
+   <script type="text/javascript" src="../static/renderjson.js"></script>
+   <script type="text/javascript" src="../static/custom.js"></script>
+ </body>
+</html>
+{% macro sqs_form(sqsFormData='') %}
+  <form action="/get_sqs_messages" method="POST">
+    <div class="form-group">
+      <span class="text-monospace">SQS URL</span>
+      <input id="SQS_URL" type="text" class="form-control" name="SQS_URL" value={{sqsFormData.queue_url}}>
+      <span class="text-monospace">Max Messages To Return:</span>
+      <input id="MAX_MSG" type="text" class="form-control" name="MAX_MSG" value={{sqsFormData.max_messages}}>
+      <span class="text-monospace">Delete messages from SQS after retrieving:</span>
+      <input id="DEL_MSG" type="checkbox" class="form-control" name="DEL_MSG" {{'checked=checked' if sqsFormData.delete_messages else ""}}>
+    </div>
+    <button type="submit" class="btn btn-block btn-primary">GET Messages</button>
+  </form>
+{% endmacro %}

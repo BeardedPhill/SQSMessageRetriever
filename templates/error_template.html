@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% from "base.html" import sqs_form %}
+
+{% block content %}
+    {{ sqs_form(sqsFormData) }}
+    <br />
+    <div class="alert alert-danger">
+      <p>{{ error_message }}</p>
+    </div>
+{% endblock %}
