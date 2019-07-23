@@ -1,14 +1,8 @@
 {% extends 'base.html' %}
+{% from "base.html" import sqs_form %}
+
 {% block content %}
-    <form action="/get_sqs_messages" method="POST">
-        <div class="form-group">
-          <span class="text-monospace">SQS URL</span>
-          <input id="SQS_URL" type="text" class="form-control" name="SQS_URL">
-          <span class="text-monospace">Max Messages To Return:</span>
-          <input id="MAX_MSG" type="text" class="form-control" name="MAX_MSG" value="10">
-        </div>
-        <button type="submit" class="btn btn-block btn-primary">GET Messages</button>
-    </form>
+    {{ sqs_form() }}
     <br />
     <div style="overflow: auto; max-height: 80vh">
         <div class="table-responsive">
