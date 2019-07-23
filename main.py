@@ -14,33 +14,62 @@ def get_messages():
     for key, value in request.form.items():
         if (key=="SQS_URL"):
             queue_url = value
+        elif (key=="MAX_MSG"):
+            max_messages = int(value)
 
     try:
-        messages = call_sqs(queue_url)
+        messages = call_sqs(queue_url, max_messages)
         return render_template('index.html', messages=messages)
     except Exception as e:
         return render_template('error_template.html', error_message=str(e))
 
 
-def get_messages_from_queue(queue_url):
+def get_messages_from_queue(queue_url, max_messages):
     sqs_client = boto3.client('sqs')
+    max_messages_per_api_call=10
+    message_count=0
 
     while True:
-        resp = sqs_client.receive_message(
-            QueueUrl=queue_url,
-            AttributeNames=['All'],
-            MaxNumberOfMessages=10
-        )
+        if message_count < max_messages:
+            max_messages_per_api_call = determine_max_message_count(
+                message_count,
+                max_messages_per_api_call,
+                max_messages
+            )
 
-        try:
-            for message in resp['Messages']:
-                yield message
-        except KeyError:
+            resp = sqs_client.receive_message(
+                QueueUrl=queue_url,
+                AttributeNames=['All'],
+                VisibilityTimeout=2,
+                MaxNumberOfMessages=max_messages_per_api_call
+            )
+
+            try:
+                message_count += len(resp['Messages'])
+
+                for message in resp['Messages']:
+                    yield message
+            except KeyError:
+                return
+        else:
             return
 
-def call_sqs(queue_url):
+def determine_max_message_count(
+    current_message_count,
+    max_messages_per_api_call,
+    max_messages_to_return_in_total):
+
+    left_over_messages_to_retrieve_count = max_messages_to_return_in_total - current_message_count
+
+    if left_over_messages_to_retrieve_count < max_messages_per_api_call:
+        return left_over_messages_to_retrieve_count
+    else:
+        return max_messages_per_api_call
+
+
+def call_sqs(queue_url, max_messages):
     messages=[]
-    for message in get_messages_from_queue(queue_url):
+    for message in get_messages_from_queue(queue_url, max_messages):
         messages.append(Message(message))
 
     return messages
