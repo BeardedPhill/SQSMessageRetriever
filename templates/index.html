@@ -2,7 +2,7 @@
 {% from "base.html" import sqs_form %}
 
 {% block content %}
-    {{ sqs_form(pageData.queue_url, pageData.max_messages) }}
+    {{ sqs_form(sqsFormData) }}
     <br />
     <div style="overflow: auto; max-height: 80vh">
         <div class="table-responsive">

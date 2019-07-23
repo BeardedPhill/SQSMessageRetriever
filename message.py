@@ -7,7 +7,8 @@ class Message():
         self.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
         self.body = message['Body']
 
-class PageData():
-    def __init__(self, queue_url=None, max_messages=None):
+class SqsFormData():
+    def __init__(self, queue_url=None, max_messages=None, delete_messages=None):
         self.queue_url = queue_url
         self.max_messages = max_messages
+        self.delete_messages = delete_messages

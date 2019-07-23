@@ -11,6 +11,19 @@
    <title>SQS Message Retriever</title>
  </head>
  <body>
+   {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-danger">
+        {% for message in messages %}
+          <div>
+            {% for para in message %}
+              <p>{{ para }}</p>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
      <div class="container h-100">
        <div class="row align-items-center h-100">
            <div class="col-md-10 col-sm-12 mx-auto">
@@ -27,13 +40,15 @@
    <script type="text/javascript" src="../static/custom.js"></script>
  </body>
 </html>
-{% macro sqs_form(queue_url='', max_messages='') %}
+{% macro sqs_form(sqsFormData='') %}
   <form action="/get_sqs_messages" method="POST">
     <div class="form-group">
       <span class="text-monospace">SQS URL</span>
-      <input id="SQS_URL" type="text" class="form-control" name="SQS_URL" value={{queue_url}}>
+      <input id="SQS_URL" type="text" class="form-control" name="SQS_URL" value={{sqsFormData.queue_url}}>
       <span class="text-monospace">Max Messages To Return:</span>
-      <input id="MAX_MSG" type="text" class="form-control" name="MAX_MSG" value={{max_messages}}>
+      <input id="MAX_MSG" type="text" class="form-control" name="MAX_MSG" value={{sqsFormData.max_messages}}>
+      <span class="text-monospace">Delete messages from SQS after retrieving:</span>
+      <input id="DEL_MSG" type="checkbox" class="form-control" name="DEL_MSG" {{'checked=checked' if sqsFormData.delete_messages else ""}}>
     </div>
     <button type="submit" class="btn btn-block btn-primary">GET Messages</button>
   </form>
