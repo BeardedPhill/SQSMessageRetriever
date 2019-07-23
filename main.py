@@ -1,5 +1,5 @@
 from flask import Flask, escape, request, render_template
-from message import Message
+from message import Message, PageData
 import sys
 import boto3
 
@@ -7,22 +7,34 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('get_messages_form.html')
+    return render_template('get_messages_form.html', pageData=buildPageData('', 10))
 
 @app.route("/get_sqs_messages", methods=["POST"])
 def get_messages():
     for key, value in request.form.items():
         if (key=="SQS_URL"):
+            queue_url_global=value
             queue_url = value
         elif (key=="MAX_MSG"):
+            max_messages_global=int(value)
             max_messages = int(value)
 
     try:
         messages = call_sqs(queue_url, max_messages)
-        return render_template('index.html', messages=messages)
+        return render_template(
+            'index.html',
+            messages=messages,
+            pageData=buildPageData(queue_url, max_messages)
+        )
     except Exception as e:
-        return render_template('error_template.html', error_message=str(e))
+        return render_template(
+            'error_template.html',
+            error_message=str(e),
+            pageData=buildPageData(queue_url, max_messages)
+        )
 
+def buildPageData(queue_url, max_messages):
+    return PageData(queue_url, max_messages)
 
 def get_messages_from_queue(queue_url, max_messages):
     sqs_client = boto3.client('sqs')

@@ -2,7 +2,7 @@
 {% from "base.html" import sqs_form %}
 
 {% block content %}
-    {{ sqs_form() }}
+    {{ sqs_form(pageData.queue_url, pageData.max_messages) }}
     <br />
     <div class="alert alert-danger">
       <p>{{ error_message }}</p>

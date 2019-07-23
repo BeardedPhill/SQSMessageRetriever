@@ -6,3 +6,8 @@ class Message():
         self.id = message['MessageId']
         self.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
         self.body = message['Body']
+
+class PageData():
+    def __init__(self, queue_url=None, max_messages=None):
+        self.queue_url = queue_url
+        self.max_messages = max_messages
